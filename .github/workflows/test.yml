@@ -1,0 +1,62 @@
+name: Test
+
+on: [ push, pull_request ]
+
+jobs:
+  test-unit:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Add Poetry to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify Poetry
+        run: poetry --version
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Install dependencies
+        run: poetry -n install --with test
+        
+      - name: Execute tests
+        run: poetry run pytest -s -v tests/unit
+
+  test-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+          
+      - name: Install Poetry
+        run: curl -sSL https://install.python-poetry.org | python3 -
+
+      - name: Add Poetry to PATH
+        run: echo "$HOME/.local/bin" >> $GITHUB_PATH
+
+      - name: Verify Poetry
+        run: poetry --version
+
+      - name: Configure Poetry
+        run: poetry config virtualenvs.in-project true
+
+      - name: Install dependencies
+        run: poetry -n install --with test
+
+      - name: Execute tests
+        run: poetry run pytest -s -v tests/unit
