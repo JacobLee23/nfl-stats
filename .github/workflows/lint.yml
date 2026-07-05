@@ -12,7 +12,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: Install Poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
@@ -29,8 +29,11 @@ jobs:
       - name: Install dependencies
         run: poetry -n install --with lint
 
-      - name: Check version support
-        run: poetry run vermin -v --no-parse-comments src/ && echo $?
+      - name: Check minimum required version
+        run: poetry run vermin -v --backport typing --eval-annotations --no-parse-comments src/
+
+      - name: Analyze for minimum required version
+        run: poetry run pyright --pythonversion 3.12 src/
 
   lint:
     runs-on: ubuntu-latest
@@ -41,7 +44,7 @@ jobs:
       - name: Install Python
         uses: actions/setup-python@v5
         with:
-          python-version: "3.10"
+          python-version: "3.12"
 
       - name: Install Poetry
         run: curl -sSL https://install.python-poetry.org | python3 -
